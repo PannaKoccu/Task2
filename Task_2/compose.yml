@@ -1,0 +1,145 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - mysql_:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
+ # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      - app-network
+      
+ # Persist redis
+  redis_persist:
+    image: redis:7-alpine
+    container_name: redis-persist
+    restart: unless-stopped
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_:/data
+    profiles:
+      - redis-persistent
+
+  # PROD BACKEND
+  backend:
+    profiles: [prod]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: mysql
+      MYSQL_DB: ${MYSQL_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      FE_HOST: ${FE_HOST}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+    expose:
+      - "5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/tasks"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # DEV BACKEND
+  backend-dev:
+    profiles: [dev]
+    image: python:3.11-slim
+    container_name: backend-dev
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "
+        pip install --no-cache-dir -r /app/requirements.txt &&
+        python /app/run.py
+      "
+    environment:
+      FLASK_DEBUG: 1
+      FLASK_ENV: development
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: mysql
+      MYSQL_DB: ${MYSQL_DB}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      FE_HOST: ${FE_HOST}
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+
+  # PROD FRONTEND
+  frontend:
+    profiles: [prod]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    environment:
+      API_URL: ${API_URL}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    networks:
+      - app-network
+
+  # DEV FRONTEND
+  frontend-dev:
+    profiles: [dev]
+    image: nginx:alpine
+    container_name: frontend-dev
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./frontend/nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf:ro 
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend-dev
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_:
+  redis_:

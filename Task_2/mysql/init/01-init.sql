@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS tasks_db;
+CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'secretpass';
+GRANT ALL PRIVILEGES ON tasks_db.* TO 'appuser'@'%';
+FLUSH PRIVILEGES;
+
+USE tasks_db;
+
+CREATE TABLE IF NOT EXISTS task (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(120) NOT NULL,
+    description TEXT,
+    status VARCHAR(20) DEFAULT 'New'
+);

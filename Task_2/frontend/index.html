@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Tasks list</h1>
+  
+  <form id="taskForm">
+    <input type="text" id="title" name="title" placeholder="Task name" required>
+    <input type="text" id="description" name="description" placeholder="Description">
+    <label for="status">Status:</label>
+    <select id="status" name="status">
+      <option value="New">New</option>
+      <option value="In progress">In progress</option>
+      <option value="Done">Done</option>
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+
+  <div id="tasks"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

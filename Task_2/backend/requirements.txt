@@ -1,0 +1,10 @@
+flask
+flask_sqlalchemy
+pymysql
+redis
+cryptography
+flask-cors
+flask-caching
+# Безопасные версии
+wheel>=0.46.2
+setuptools>=79.0.1

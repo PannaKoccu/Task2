@@ -1,0 +1,114 @@
+/* style.css */
+
+/* Global styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f7fa;
+  color: #333;
+  margin: 0;
+  padding: 0 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 40px;
+  color: #2c3e50;
+}
+
+/* Form styling */
+form#taskForm {
+  max-width: 500px;
+  margin: 20px auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+form#taskForm input,
+form#taskForm select {
+  padding: 10px;
+  border: 1px solid #ccd0d5;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+form#taskForm input:focus,
+form#taskForm select:focus {
+  border-color: #3498db;
+}
+
+form#taskForm button {
+  padding: 10px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+form#taskForm button:hover {
+  background: #2980b9;
+}
+
+/* Tasks container */
+#tasks {
+  max-width: 600px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Individual task element */
+#tasks div {
+  background: #ffffff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#tasks div div { /* button container */
+  margin-left: auto;
+  display: flex;
+  gap: 5px;
+}
+
+#tasks div span {
+  font-weight: 500;
+}
+
+/* Buttons inside tasks */
+#tasks button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+#tasks button:hover {
+  opacity: 0.85;
+}
+
+#tasks button:nth-child(2) { /* Toggle button */
+  background: #f1c40f;
+  color: #fff;
+}
+
+#tasks button:nth-child(3) { /* Delete button */
+  background: #e74c3c;
+  color: #fff;
+}
