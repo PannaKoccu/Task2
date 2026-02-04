@@ -38,6 +38,8 @@ services:
       - redis_:/data
     profiles:
       - redis-persistent
+#    networks:
+#      - app-network
 
   # PROD BACKEND
   backend:

@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS tasks_db;
-CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'secretpass';
+CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY 'secretpass'; # usage of sensitive data in migrations
 GRANT ALL PRIVILEGES ON tasks_db.* TO 'appuser'@'%';
 FLUSH PRIVILEGES;
 
